@@ -26,7 +26,8 @@ public class Controller extends LinearOpMode {
     private float ArmYaxis;
     private Servo Grabber;
     private DcMotor SpinnerMotor;
-   // boolean GrabberActivate;
+   boolean GrabberActivate;
+   boolean SpinnerActivate;
 
     @Override
     public void runOpMode() {
@@ -34,16 +35,19 @@ public class Controller extends LinearOpMode {
         leftMotor = hardwareMap.get(DcMotor.class, "LeftDrive");
         rightMotor = hardwareMap.get(DcMotor.class, "RightDrive");
         armMotor = hardwareMap.get(DcMotor.class, "ArmDrive");
-        Useless = hardwareMap.get(DcMotor.class, "Useless");
-        Grabber = hardwareMap.get(Servo.class, "SpinnerMotor");
+        SpinnerMotor = hardwareMap.get(DcMotor.class, "SpinnerMotor");
+        Grabber = hardwareMap.get(Servo.class, "Grabber");
         
         waitForStart();
 
         while (opModeIsActive()) {
-        // current inputs    
+        // Analog Inputs   
         MovementYaxis = this.gamepad1.left_stick_y;
         MovementXaxis = this.gamepad1.left_stick_x;
         ArmYaxis = this.gamepad1.right_stick_y;
+		// Digital Inputs
+		GrabberActivate = gamepad1.a;
+		SpinnerActivate = gamepad1.y;
 
         //arm code 
         armMotor.setPower(ArmYaxis);
@@ -52,13 +56,13 @@ public class Controller extends LinearOpMode {
         telemetry.addData("Arm:", generateBar(ArmPowerIndicator));
 
         //movment code
-        leftMotorPower = MovementYaxis + -MovementXaxis;
-        rightMotorPower = MovementYaxis + MovementXaxis;
+        leftMotorPower = -MovementYaxis + -MovementXaxis;
+        rightMotorPower = -MovementYaxis + MovementXaxis;
         
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
         
-        if(gamepad1.a){
+        if(GrabberActivate){
                 Grabber.setPosition(0.5);
             
         } else{
@@ -66,11 +70,11 @@ public class Controller extends LinearOpMode {
             Grabber.setPosition(0);
         }
         
-        if(gamepad1.y){
-            Useless.setPower(1);
+        if(SpinnerActivate){
+            SpinnerMotor.setPower(1);
             
         }else{
-            Useless.setPower(0);
+            SpinnerMotor.setPower(0);
 
         }
         
