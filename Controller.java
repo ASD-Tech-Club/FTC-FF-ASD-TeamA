@@ -41,7 +41,7 @@ public class Controller extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-        // Analog Inputs   
+        // Analog Inputs
         MovementYaxis = this.gamepad1.left_stick_y;
         MovementXaxis = this.gamepad1.left_stick_x;
         ArmYaxis = this.gamepad1.right_stick_y;
@@ -49,52 +49,26 @@ public class Controller extends LinearOpMode {
 		GrabberActivate = gamepad1.a;
 		SpinnerActivate = gamepad1.y;
 
-        //arm code 
-        armMotor.setPower(ArmYaxis);
-        
-        int ArmPowerIndicator = Math.abs( (int)(ArmYaxis*10));
-        telemetry.addData("Arm:", generateBar(ArmPowerIndicator));
-
-        //movment code
         leftMotorPower = -MovementYaxis + -MovementXaxis;
-        rightMotorPower = -MovementYaxis + MovementXaxis;
-        
+        rightMotorPower = -MovementYaxis + MovementXaxis;   
+		
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
+		armMotor.setPower(ArmYaxis);
         
         if(GrabberActivate){
-                Grabber.setPosition(0.5);
-            
+            Grabber.setPosition(0.5);
         } else{
-            
             Grabber.setPosition(0);
         }
         
         if(SpinnerActivate){
             SpinnerMotor.setPower(1);
-            
         }else{
             SpinnerMotor.setPower(0);
 
-        }
-        
-        
-        int LeftPowerIndicator = Math.abs( (int)(leftMotorPower*10));
-        int RightPowerIndicator = Math.abs((int)(rightMotorPower*10));
-        telemetry.addData("Movement Motor 1: ", generateBar(LeftPowerIndicator));
-       
+        }  
     }}
-    
-    public String generateBar(int power){ // power bar code
-        
-            String output = "";
-            for(int i = 0; i < power ;i++){
-            output += "█";
-            }
-        return output;
-            
-        
-        
-        
+     
     }
 }
