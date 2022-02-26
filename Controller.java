@@ -16,58 +16,47 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp
 
 public class Controller extends LinearOpMode {
-    private DcMotor leftMotor;
-    private DcMotor rightMotor;
-    private DcMotor armMotor;
-    private float leftMotorPower;
-    private float rightMotorPower;
+	
+    private DcMotor Motor1;
+    private DcMotor Motor2;
+    private DcMotor Motor3;
+	
+   
     private float MovementXaxis;
     private float MovementYaxis;
+	
     private float ArmYaxis;
     private Servo Grabber;
     private DcMotor SpinnerMotor;
    boolean GrabberActivate;
    boolean SpinnerActivate;
+   
+   private triMotor MotorTranslator;
+   
+   private double[] triMotorVelocity;
 
     @Override
     public void runOpMode() {
     
-        leftMotor = hardwareMap.get(DcMotor.class, "LeftDrive");
-        rightMotor = hardwareMap.get(DcMotor.class, "RightDrive");
-        armMotor = hardwareMap.get(DcMotor.class, "ArmDrive");
-        SpinnerMotor = hardwareMap.get(DcMotor.class, "SpinnerMotor");
-        Grabber = hardwareMap.get(Servo.class, "Grabber");
+        Motor1 = hardwareMap.get(DcMotor.class, "M1");
+        Motor2 = hardwareMap.get(DcMotor.class, "M2");
+		Motor3 = hardwareMap.get(DcMotor.class, "M3");
+		
+		MotorTranslator = new triMotor();
         
         waitForStart();
-
+		
         while (opModeIsActive()) {
         // Analog Inputs
         MovementYaxis = this.gamepad1.left_stick_y;
         MovementXaxis = this.gamepad1.left_stick_x;
-        ArmYaxis = this.gamepad1.right_stick_y;
-		// Digital Inputs
-		GrabberActivate = gamepad1.a;
-		SpinnerActivate = gamepad1.y;
 
-        leftMotorPower = -MovementYaxis + -MovementXaxis;
-        rightMotorPower = -MovementYaxis + MovementXaxis;   
+		triMotorVelocity = MotorTranslator.motorvelocity((double)MovementXaxis,(double)MovementYaxis,0);
+
+        Motor1.setPower((float)triMotorVelocity[0]);
+        Motor2.setPower((float)triMotorVelocity[1]);
+		Motor3.setPower((float)triMotorVelocity[2]);
 		
-        leftMotor.setPower(leftMotorPower);
-        rightMotor.setPower(rightMotorPower);
-		armMotor.setPower(ArmYaxis);
-        
-        if(GrabberActivate){
-            Grabber.setPosition(0.5);
-        } else{
-            Grabber.setPosition(0);
-        }
-        
-        if(SpinnerActivate){
-            SpinnerMotor.setPower(1);
-        }else{
-            SpinnerMotor.setPower(0);
-
-        }  
     }}
      
     }
