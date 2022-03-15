@@ -24,7 +24,10 @@ public class Controller extends LinearOpMode {
     private float MovementXaxis;
     private float MovementYaxis;
     private float ArmYaxis;
-    private Servo Grabber;
+    
+    
+    private Servo servo1;
+    private Servo servo2;
     private DcMotor SpinnerMotor;
    boolean GrabberActivate;
    boolean SpinnerActivate;
@@ -32,43 +35,46 @@ public class Controller extends LinearOpMode {
     @Override
     public void runOpMode() {
     
+    //drive motors
         leftMotor = hardwareMap.get(DcMotor.class, "LeftDrive");
         rightMotor = hardwareMap.get(DcMotor.class, "RightDrive");
+    //arm motors
         armMotor = hardwareMap.get(DcMotor.class, "ArmDrive");
-        SpinnerMotor = hardwareMap.get(DcMotor.class, "SpinnerMotor");
-        Grabber = hardwareMap.get(Servo.class, "Grabber");
+    //servo motors for arm
+        
+        
+        servo1 = hardwareMap.get(Servo.class, "servo1");
+        servo2 = hardwareMap.get(Servo.class, "servo2");
         
         waitForStart();
 
         while (opModeIsActive()) {
-        // Analog Inputs
+        // Analog Inputs   
         MovementYaxis = this.gamepad1.left_stick_y;
         MovementXaxis = this.gamepad1.left_stick_x;
         ArmYaxis = this.gamepad1.right_stick_y;
-		// Digital Inputs
-		GrabberActivate = gamepad1.a;
-		SpinnerActivate = gamepad1.y;
+        // Digital Inputs
+        GrabberActivate = gamepad1.a;
 
+        //arm code 
+        armMotor.setPower(ArmYaxis);
+        //movment code
         leftMotorPower = -MovementYaxis + -MovementXaxis;
-        rightMotorPower = -MovementYaxis + MovementXaxis;   
-		
+        rightMotorPower = -MovementYaxis + MovementXaxis;
+        
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
-		armMotor.setPower(ArmYaxis);
         
         if(GrabberActivate){
-            Grabber.setPosition(0.5);
+                servo1.setPosition(1);
+                servo2.setPosition(1);
+            
         } else{
-            Grabber.setPosition(0);
-        }
-        
-        if(SpinnerActivate){
-            SpinnerMotor.setPower(1);
-        }else{
-            SpinnerMotor.setPower(0);
+            
+            servo1.setPosition(0.5);
+            servo2.setPosition(0.5);
 
-        }  
+        }
     }}
-     
-    }
+    
 }
