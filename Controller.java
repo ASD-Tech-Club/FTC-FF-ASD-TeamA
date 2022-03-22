@@ -16,6 +16,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp
 
 public class Controller extends LinearOpMode {
+    
+    private float opensize = (float) 0.2;
     private DcMotor leftMotor;
     private DcMotor rightMotor;
     private DcMotor armMotor;
@@ -29,29 +31,26 @@ public class Controller extends LinearOpMode {
     private Servo servo1;
     private Servo servo2;
     private DcMotor SpinnerMotor;
-    private int speed; 
+    private float speed = 0; 
 
 
 
-   boolean GrabberActivate;
+   boolean GrabberEngaged;
+   boolean GrabberDisengaged;
+
+   
    boolean SpinnerActivate;
+   boolean apressed;
 
 
    //modes 
 
-   private boolean turbo;
 
     @Override
     public void runOpMode() {
 
-        turbo = gamepad1.x;
+            speed = (float)1;
 
-        if(turbo){
-            speed = 1;
-
-        } else {
-            speed = 0.5;
-        }
     
     //drive motors
         leftMotor = hardwareMap.get(DcMotor.class, "LeftDrive");
@@ -65,34 +64,48 @@ public class Controller extends LinearOpMode {
         servo2 = hardwareMap.get(Servo.class, "servo2");
         
         waitForStart();
+        apressed = false;
 
         while (opModeIsActive()) {
         // Analog Inputs   
         MovementYaxis = this.gamepad1.left_stick_y;
         MovementXaxis = this.gamepad1.left_stick_x;
-        ArmYaxis = this.gamepad1.right_stick_y;
+        ArmYaxis = -this.gamepad1.right_stick_y;
         // Digital Inputs
-        GrabberActivate = gamepad1.a;
+        GrabberEngaged = gamepad1.a;
+        GrabberDisengaged = gamepad1.x;
+        
+        
 
         //arm code 
-        armMotor.setPower(ArmYaxis)/speed;
+        armMotor.setPower(ArmYaxis*speed);
         //movment code
-        leftMotorPower/speed = -MovementYaxis + -MovementXaxis;
-        rightMotorPower/speed = -MovementYaxis + MovementXaxis;
+        leftMotorPower = MovementYaxis  - MovementXaxis;
+        rightMotorPower= MovementYaxis + MovementXaxis;
+        
+        leftMotorPower *= speed;
+        rightMotorPower *= speed;
         
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
         
-        if(GrabberActivate){
+        
+        
+        if (apressed == false) {
+            if(GrabberEngaged){
+                apressed = true;
                 servo1.setPosition(1);
-                servo2.setPosition(1);
-            
-        } else{
-            
-            servo1.setPosition(0.5);
-            servo2.setPosition(0.5);
-
+                servo2.setPosition(-1);
+            }
+        } 
+        if(apressed == true) {
+            if(GrabberDisengaged) {
+                servo1.setPosition(0.5 + opensize);
+                servo2.setPosition(0.5 - opensize);
+                apressed = false;
+            }
         }
-    }}
-    
+
+}
+}
 }
