@@ -29,11 +29,29 @@ public class Controller extends LinearOpMode {
     private Servo servo1;
     private Servo servo2;
     private DcMotor SpinnerMotor;
+    private int speed; 
+
+
+
    boolean GrabberActivate;
    boolean SpinnerActivate;
 
+
+   //modes 
+
+   private boolean turbo;
+
     @Override
     public void runOpMode() {
+
+        turbo = gamepad1.x;
+
+        if(turbo){
+            speed = 1;
+
+        } else {
+            speed = 0.5;
+        }
     
     //drive motors
         leftMotor = hardwareMap.get(DcMotor.class, "LeftDrive");
@@ -57,10 +75,10 @@ public class Controller extends LinearOpMode {
         GrabberActivate = gamepad1.a;
 
         //arm code 
-        armMotor.setPower(ArmYaxis);
+        armMotor.setPower(ArmYaxis)/speed;
         //movment code
-        leftMotorPower = -MovementYaxis + -MovementXaxis;
-        rightMotorPower = -MovementYaxis + MovementXaxis;
+        leftMotorPower/speed = -MovementYaxis + -MovementXaxis;
+        rightMotorPower/speed = -MovementYaxis + MovementXaxis;
         
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
