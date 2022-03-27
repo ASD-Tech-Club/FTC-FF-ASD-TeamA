@@ -24,6 +24,8 @@ public class Controller extends LinearOpMode {
     private DcMotor leftMotor;
     private DcMotor rightMotor;
     private DcMotor armMotor;
+    private DcMotor spinnerMotor;
+    
     
     private float leftMotorPower;
     private float rightMotorPower;
@@ -40,9 +42,13 @@ public class Controller extends LinearOpMode {
     
    boolean grabberEngaged;
    boolean grabberDisengaged;
+   boolean startEngaged;
+   boolean startDisengaged;
 
    boolean spinnerActivate;
    boolean apressed;
+   
+   boolean upPressed;
    
    boolean turboActivate;
 
@@ -54,10 +60,14 @@ public class Controller extends LinearOpMode {
     public void runOpMode() {
         
 
+        
+
         //define motor objects and servo objects
         leftMotor = hardwareMap.get(DcMotor.class, "LeftDrive");
         rightMotor = hardwareMap.get(DcMotor.class, "RightDrive");
         armMotor = hardwareMap.get(DcMotor.class, "ArmDrive");
+        spinnerMotor = hardwareMap.get(DcMotor.class, "SpinnerMotor");
+
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
         
@@ -68,9 +78,11 @@ public class Controller extends LinearOpMode {
         waitForStart();
         
         apressed = false;
+        upPressed = false;
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running" );
+
         // drive input from left stick   
         driveYaxis = this.gamepad1.left_stick_y;
         driveXaxis = this.gamepad1.left_stick_x;
@@ -82,25 +94,58 @@ public class Controller extends LinearOpMode {
         
         grabberEngaged = gamepad1.a;
         grabberDisengaged = gamepad1.x;
+        
+        startEngaged = gamepad1.b;
+        startDisengaged = gamepad1.y;
+        
         turboActivate = gamepad1.left_bumper;
+        spinnerActivate = gamepad1.right_bumper;
         
 
         // Motor Driver Code
+        
+        
+        
+        
+        
+        
+        
         CalculateMotorVelocities(driveYaxis,driveXaxis,armYaxis, speed,turboActivate);
         
         telemetry.addData("Turbo Status"," Turbo Activated: " + turboActivate);
         
         
-         telemetry.addData("Left Motor Status", " Motor Power: " + 
-         Math.abs(leftMotorPower * 100) + "%");
+         telemetry.addData("Left Motor Status", " Motor Power: " + Math.abs(leftMotorPower * 100) + "%");
           telemetry.addData("Right Motor Status", " Motor Power: " + Math.abs(rightMotorPower * 100) + "%");
-          telemetry.addData("Arm Motor Status", " Motor Power: " + Math.abs(armMotorPower * 100) + "%");
-            //telemetry.update();
-        
+          telemetry.addData("Arm Motor Status", " Motor Power: " + Math.abs(armMotorPower * 100) + "%" + "Motor Position: " + armMotor.getCurrentPosition());
+
         armMotor.setPower(armMotorPower);
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
         
+        if(spinnerActivate){
+            spinnerMotor.setPower(1);
+        } else {
+            spinnerMotor.setPower(0);
+            
+        }
+        
+        
+         if (upPressed == false) {
+            if(startEngaged){
+                upPressed = true;
+                 setPosition(1000);
+            }
+        } 
+        if(upPressed == true) {
+            if(startDisengaged) {
+                 upPressed = false;
+
+            }
+        }
+        
+                        telemetry.addData("Status: ", " Test: " + upPressed);
+
         
         
         if (apressed == false) {
@@ -153,12 +198,32 @@ public void CalculateMotorVelocities(
         rightMotorPower= driveYaxis + driveXaxis;
         armMotorPower = armYaxis;
         
-        leftMotorPower *= speed/5;
-        rightMotorPower *= speed/5;
-        armMotorPower *= speed/5;  
+        leftMotorPower *= speed/2;
+        rightMotorPower *= speed/2;
+        armMotorPower *= speed/3;  
     }
      
     
+}
+
+public void SetPosition(float TargetPosition){
+    
+    if(armMotor.getCurrentPosition() < endTargetPosition){
+         while(armMotor.getCurrentPosition() < endTargetPosition ){
+        armMotor.setPower(-1);
+        
+    }
+        
+        
+    }else {
+        while(armMotor.getCurrentPosition() > endTargetPosition ){
+        armMotor.setPower(1);
+        
+    }
+    
+    
+    }
+   
 }
 
 }
