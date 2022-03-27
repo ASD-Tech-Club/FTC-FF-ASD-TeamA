@@ -17,30 +17,34 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Controller extends LinearOpMode {
     
-    private float opensize = (float) 0.2;
+    private float opensize =  0.1f;
+    private float speed = 1f; 
+
+    
     private DcMotor leftMotor;
     private DcMotor rightMotor;
     private DcMotor armMotor;
+    
     private float leftMotorPower;
     private float rightMotorPower;
-    private float MovementXaxis;
-    private float MovementYaxis;
-    private float ArmYaxis;
     
+    private float driveXaxis;
+    private float driveYaxis;
+    
+    private float armYaxis;
     
     private Servo servo1;
     private Servo servo2;
+    
     private DcMotor SpinnerMotor;
-    private float speed = 0; 
+    
+   boolean grabberEngaged;
+   boolean grabberDisengaged;
 
-
-
-   boolean GrabberEngaged;
-   boolean GrabberDisengaged;
-
-   
-   boolean SpinnerActivate;
+   boolean spinnerActivate;
    boolean apressed;
+   
+   boolean turboActivate;
 
 
    //modes 
@@ -48,43 +52,41 @@ public class Controller extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
-            speed = (float)1;
-
-    
-    //drive motors
+        
+        //define motor objects and servo objects
         leftMotor = hardwareMap.get(DcMotor.class, "LeftDrive");
         rightMotor = hardwareMap.get(DcMotor.class, "RightDrive");
-    //arm motors
         armMotor = hardwareMap.get(DcMotor.class, "ArmDrive");
-    //servo motors for arm
-        
-        
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
         
         waitForStart();
+        
         apressed = false;
 
         while (opModeIsActive()) {
-        // Analog Inputs   
-        MovementYaxis = this.gamepad1.left_stick_y;
-        MovementXaxis = this.gamepad1.left_stick_x;
-        ArmYaxis = -this.gamepad1.right_stick_y;
+        // drive input from left stick   
+        driveYaxis = this.gamepad1.left_stick_y;
+        driveXaxis = this.gamepad1.left_stick_x;
+        // arm input from right stick
+        armYaxis = -this.gamepad1.right_stick_y;
+        
+        
         // Digital Inputs
-        GrabberEngaged = gamepad1.a;
-        GrabberDisengaged = gamepad1.x;
+        
+        grabberEngaged = gamepad1.a;
+        grabberDisengaged = gamepad1.x;
         
         
 
         //arm code 
-        armMotor.setPower(ArmYaxis*speed);
-        //movment code
-        leftMotorPower = MovementYaxis  - MovementXaxis;
-        rightMotorPower= MovementYaxis + MovementXaxis;
+        //motor drive code
         
-        leftMotorPower *= speed;
-        rightMotorPower *= speed;
+        armMotor.setPower(armYaxis);
+        
+        
+        
+        CalculateMotorVelocity(driveYaxis,driveXaxis,speed);
         
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
@@ -92,20 +94,34 @@ public class Controller extends LinearOpMode {
         
         
         if (apressed == false) {
-            if(GrabberEngaged){
+            if(grabberEngaged){
                 apressed = true;
                 servo1.setPosition(1);
                 servo2.setPosition(-1);
             }
         } 
         if(apressed == true) {
-            if(GrabberDisengaged) {
-                servo1.setPosition(0.5 + opensize);
-                servo2.setPosition(0.5 - opensize);
+            if(grabberDisengaged) {
+                servo1.setPosition(0.5 - opensize);
+                servo2.setPosition(0.5 + opensize);
                 apressed = false;
             }
         }
 
 }
 }
+
+public void CalculateMotorVelocity(float driveYaxis, float driveXaxis,float speed){
+    //setting class vaiables
+    this.driveXaxis = driveXaxis;
+    this.driveYaxis = driveYaxis;
+    this.speed = speed;
+    //calculating motor velocity
+     leftMotorPower = driveYaxis  - driveXaxis;
+        rightMotorPower= driveYaxis + driveXaxis;
+        leftMotorPower *= speed;
+        rightMotorPower *= speed;
+    
+}
+
 }
