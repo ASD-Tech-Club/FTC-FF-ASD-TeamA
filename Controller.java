@@ -27,10 +27,11 @@ public class Controller extends LinearOpMode {
     
     private float leftMotorPower;
     private float rightMotorPower;
+    private float armMotorPower;
     
+
     private float driveXaxis;
     private float driveYaxis;
-    
     private float armYaxis;
     
     private Servo servo1;
@@ -81,15 +82,13 @@ public class Controller extends LinearOpMode {
 
         //motor drive code
         
-        armMotor.setPower(armYaxis);
         
         
         
         
+        CalculateMotorVelocities(driveYaxis,driveXaxis,armYaxis, speed,turboActivate);
         
-        
-        CalculateMotorVelocity(driveYaxis,driveXaxis,speed,turboActivate);
-        
+        armMotor.setPower(armMotorPower);
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
         
@@ -113,25 +112,34 @@ public class Controller extends LinearOpMode {
 }
 }
 
-public void CalculateMotorVelocity(
-    float driveYaxis, float driveXaxis, float speed, boolean turboActivate){
+public void CalculateMotorVelocities(
+    float driveYaxis, float driveXaxis, float armYaxis,
+    float speed, boolean turboActivate){
+        
     //setting class vaiables
     this.driveXaxis = driveXaxis;
     this.driveYaxis = driveYaxis;
+    this.armYaxis = armYaxis;
     this.speed = speed;
     //calculating motor velocity
     
     if(!turboActivate){
         leftMotorPower = driveYaxis  - driveXaxis;
         rightMotorPower= driveYaxis + driveXaxis;
+        armMotorPower = armYaxis;
+        
         leftMotorPower *= speed;
         rightMotorPower *= speed;
+        armMotorPower *= speed;
     } else{
+        
         leftMotorPower = driveYaxis  - driveXaxis;
         rightMotorPower= driveYaxis + driveXaxis;
+        armMotorPower = armYaxis;
+        
         leftMotorPower *= speed/5;
         rightMotorPower *= speed/5;
-        
+        armMotorPower *= speed/5;  
     }
      
     
