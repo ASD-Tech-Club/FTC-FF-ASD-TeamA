@@ -76,17 +76,19 @@ public class Controller extends LinearOpMode {
         
         grabberEngaged = gamepad1.a;
         grabberDisengaged = gamepad1.x;
-        
+        turboActivate = gamepad1.left_bumper;
         
 
-        //arm code 
         //motor drive code
         
         armMotor.setPower(armYaxis);
         
         
         
-        CalculateMotorVelocity(driveYaxis,driveXaxis,speed);
+        
+        
+        
+        CalculateMotorVelocity(driveYaxis,driveXaxis,speed,turboActivate);
         
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
@@ -111,16 +113,27 @@ public class Controller extends LinearOpMode {
 }
 }
 
-public void CalculateMotorVelocity(float driveYaxis, float driveXaxis,float speed){
+public void CalculateMotorVelocity(
+    float driveYaxis, float driveXaxis, float speed, boolean turboActivate){
     //setting class vaiables
     this.driveXaxis = driveXaxis;
     this.driveYaxis = driveYaxis;
     this.speed = speed;
     //calculating motor velocity
-     leftMotorPower = driveYaxis  - driveXaxis;
+    
+    if(!turboActivate){
+        leftMotorPower = driveYaxis  - driveXaxis;
         rightMotorPower= driveYaxis + driveXaxis;
         leftMotorPower *= speed;
         rightMotorPower *= speed;
+    } else{
+        leftMotorPower = driveYaxis  - driveXaxis;
+        rightMotorPower= driveYaxis + driveXaxis;
+        leftMotorPower *= speed/5;
+        rightMotorPower *= speed/5;
+        
+    }
+     
     
 }
 
