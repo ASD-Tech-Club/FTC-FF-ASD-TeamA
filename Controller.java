@@ -51,6 +51,7 @@ public class Controller extends LinearOpMode {
    boolean upPressed;
    
    boolean turboActivate;
+   
 
 
    //modes 
@@ -60,6 +61,8 @@ public class Controller extends LinearOpMode {
     public void runOpMode() {
         
 
+        
+     	telemetry.setMsTransmissionInterval(10);
         
 
         //define motor objects and servo objects
@@ -72,7 +75,7 @@ public class Controller extends LinearOpMode {
         servo2 = hardwareMap.get(Servo.class, "servo2");
         
         
-        telemetry.addData("Status", "Motors Initialized - Gip Size: " + opensize + " Set Speed: " + speed  );
+        telemetry.addData("Status", "Motors Initialized --> Gip Size: " + opensize + " Set Speed: " + speed  );
         telemetry.update();
         
         waitForStart();
@@ -81,7 +84,9 @@ public class Controller extends LinearOpMode {
         upPressed = false;
 
         while (opModeIsActive()) {
-            telemetry.addData("Status", "Running" );
+            telemetry.addData("Status", "Running: Transmission Interval: " + telemetry.getMsTransmissionInterval() + "ms" );
+            
+            telemetry.getMsTransmissionInterval();
 
         // drive input from left stick   
         driveYaxis = this.gamepad1.left_stick_y;
@@ -114,10 +119,10 @@ public class Controller extends LinearOpMode {
         
         telemetry.addData("Turbo Status"," Turbo Activated: " + turboActivate);
         
-        
          telemetry.addData("Left Motor Status", " Motor Power: " + Math.abs(leftMotorPower * 100) + "%");
           telemetry.addData("Right Motor Status", " Motor Power: " + Math.abs(rightMotorPower * 100) + "%");
           telemetry.addData("Arm Motor Status", " Motor Power: " + Math.abs(armMotorPower * 100) + "%" + "Motor Position: " + armMotor.getCurrentPosition());
+            telemetry.addData("Spinner Motor Status", " Motor Power: " + Math.abs(spinnerMotor.getPower() * 100) + "%" );
 
         armMotor.setPower(armMotorPower);
         leftMotor.setPower(leftMotorPower);
@@ -130,22 +135,14 @@ public class Controller extends LinearOpMode {
             
         }
         
-        
-         if (upPressed == false) {
-            if(startEngaged){
-                upPressed = true;
-                 setPosition(1000);
-            }
-        } 
-        if(upPressed == true) {
-            if(startDisengaged) {
-                 upPressed = false;
-
-            }
+            
+        if(gamepad1.right_stick_button){
+            servo1.setPosition(-1);
+            servo2.setPosition(1);
         }
         
-                        telemetry.addData("Status: ", " Test: " + upPressed);
-
+        
+         
         
         
         if (apressed == false) {
@@ -205,25 +202,4 @@ public void CalculateMotorVelocities(
      
     
 }
-
-public void SetPosition(float TargetPosition){
-    
-    if(armMotor.getCurrentPosition() < endTargetPosition){
-         while(armMotor.getCurrentPosition() < endTargetPosition ){
-        armMotor.setPower(-1);
-        
-    }
-        
-        
-    }else {
-        while(armMotor.getCurrentPosition() > endTargetPosition ){
-        armMotor.setPower(1);
-        
-    }
-    
-    
-    }
-   
-}
-
 }
