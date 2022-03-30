@@ -45,7 +45,9 @@ public class Controller extends LinearOpMode {
    boolean startEngaged;
    boolean startDisengaged;
 
-   boolean spinnerActivate;
+   boolean spinnerRightActivate;
+   boolean spinnerLeftActivate;
+   
    boolean apressed;
    
    boolean upPressed;
@@ -100,11 +102,11 @@ public class Controller extends LinearOpMode {
         grabberEngaged = gamepad1.a;
         grabberDisengaged = gamepad1.x;
         
-        startEngaged = gamepad1.b;
-        startDisengaged = gamepad1.y;
         
-        turboActivate = gamepad1.left_bumper;
-        spinnerActivate = gamepad1.right_bumper;
+        turboActivate = gamepad1.b;
+        
+        spinnerRightActivate = gamepad1.left_bumper;
+        spinnerLeftActivate = gamepad1.right_bumper;
         
 
         // Motor Driver Code
@@ -128,11 +130,12 @@ public class Controller extends LinearOpMode {
         leftMotor.setPower(leftMotorPower);
         rightMotor.setPower(rightMotorPower);
         
-        if(spinnerActivate){
+        if(spinnerRightActivate){
             spinnerMotor.setPower(1);
-        } else {
+        } else if(spinnerLeftActivate) {
+            spinnerMotor.setPower(-1);
+        }else {
             spinnerMotor.setPower(0);
-            
         }
         
             
